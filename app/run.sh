@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SSL_CERTIFICATE_KEY="/etc/ssl/le/live/$ROOT_SERVER_NAME/privkey.pem"
-SSL_CERTIFICATE="/etc/ssl/le/live/$ROOT_SERVER_NAME/cert.pem"
+SSL_CERTIFICATE="/etc/ssl/le/live/$ROOT_SERVER_NAME/fullchain.pem"
 CA_CERTIFICATE="/nginx/config/ca/cacert.pem"
 
 HEADER="
@@ -9,7 +9,7 @@ user nginx;\n
 worker_processes 1;\n
 load_module \"modules/ngx_stream_module.so\";\n
 
-# error_log off;\n
+error_log /dev/stdout;\n
 
 events {\n
     worker_connections 1024;\n
@@ -23,7 +23,7 @@ http {\n
     default_type application/octet-stream;\n
     proxy_buffering off;\n
     reset_timedout_connection on;\n
-    # access_log off;\n
+    access_log off;\n
 
     ssl_certificate $SSL_CERTIFICATE;\n
     ssl_certificate_key $SSL_CERTIFICATE_KEY;\n
@@ -41,7 +41,7 @@ http {\n
         server_name $SERVER_NAME;\n
 
         location / {\n
-            proxy_pass http://$BOT_CONTAINER_NAME:9000;\n
+            proxy_pass http://$BOT_CONTAINER;\n
         }\n
     }\n
 }\n\n
